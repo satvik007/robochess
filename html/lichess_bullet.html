@@ -1,0 +1,836 @@
+<!-- Lichess is open source! See https://lichess.org/source -->
+<head>
+  <meta charset="utf-8" />
+  <meta
+    name="viewport"
+    content="width=device-width,initial-scale=1,viewport-fit=cover"
+  />
+  <meta
+    http-equiv="Content-Security-Policy"
+    content="default-src 'self' https://lichess1.org; connect-src wss://0.peerjs.com 'self' https://lichess1.org wss://socket0.lichess.org wss://socket1.lichess.org wss://socket2.lichess.org wss://socket3.lichess.org wss://socket4.lichess.org wss://socket5.lichess.org https://explorer.lichess.ovh https://tablebase.lichess.ovh; style-src 'self' 'unsafe-inline' https://lichess1.org; frame-src 'self' https://lichess1.org https://www.youtube.com https://player.twitch.tv; worker-src 'self' https://lichess1.org; img-src data: *; script-src 'nonce-cTqZ2FgO9poMyoe7riCQqVLO' 'self' https://lichess1.org; base-uri 'none';"
+  />
+  <meta name="theme-color" content="#dbd7d1" />
+  <title>Game Over - Play Anon. • lichess.org</title>
+  <link
+    href="https://lichess1.org/assets/_d3CRC1/css/site.light.min.css"
+    rel="stylesheet"
+  />
+  <link
+    href="https://lichess1.org/assets/_d3CRC1/css/round.light.min.css"
+    rel="stylesheet"
+  />
+  <link
+    id="piece-sprite"
+    href="https://lichess1.org/assets/_d3CRC1/piece-css/cburnett.css"
+    rel="stylesheet"
+  />
+  <meta
+    content="Anon. plays Anon. in a casual Bullet (1+0) game of chess. Game is still being played after 1 moves. Click to replay, analyse, and discuss the game!"
+    name="description"
+  />
+  <link
+    rel="mask-icon"
+    href="https://lichess1.org/assets/_d3CRC1/logo/lichess.svg"
+    style="color: black"
+  />
+  <link
+    rel="icon"
+    type="image/png"
+    href="https://lichess1.org/assets/_Fq992C/logo/lichess-favicon-512.png"
+    sizes="512x512"
+  />
+  <link
+    rel="icon"
+    type="image/png"
+    href="https://lichess1.org/assets/_Fq992C/logo/lichess-favicon-256.png"
+    sizes="256x256"
+  />
+  <link
+    rel="icon"
+    type="image/png"
+    href="https://lichess1.org/assets/_Fq992C/logo/lichess-favicon-192.png"
+    sizes="192x192"
+  />
+  <link
+    rel="icon"
+    type="image/png"
+    href="https://lichess1.org/assets/_Fq992C/logo/lichess-favicon-128.png"
+    sizes="128x128"
+  />
+  <link
+    rel="icon"
+    type="image/png"
+    href="https://lichess1.org/assets/_Fq992C/logo/lichess-favicon-64.png"
+    sizes="64x64"
+  />
+  <link
+    id="favicon"
+    rel="icon"
+    type="image/png"
+    href="https://lichess1.org/assets/_Fq992C/logo/lichess-favicon-32.png"
+    sizes="32x32"
+  />
+  <meta content="noindex, nofollow" name="robots" />
+  <meta name="google" content="notranslate" />
+  <meta property="og:title" content="Bullet Chess • Anon. vs Anon." />
+  <meta
+    property="og:description"
+    content="Anon. plays Anon. in a casual Bullet (1+0) game of chess. Game is still being played after 1 moves. Click to replay, analyse, and discuss the game!"
+  />
+  <meta property="og:url" content="https://lichess.org/UtD8mbsZ/black" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="lichess.org" />
+  <meta
+    property="og:image"
+    content="https://lichess1.org/game/export/gif/thumbnail/UtD8mbsZ.gif"
+  />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Bullet Chess • Anon. vs Anon." />
+  <meta
+    name="twitter:description"
+    content="Anon. plays Anon. in a casual Bullet (1+0) game of chess. Game is still being played after 1 moves. Click to replay, analyse, and discuss the game!"
+  />
+  <meta
+    name="twitter:image"
+    content="https://lichess1.org/game/export/gif/thumbnail/UtD8mbsZ.gif"
+  />
+  <link
+    href="/blog.atom"
+    type="application/atom+xml"
+    rel="alternate"
+    title="Blog"
+  />
+  <link
+    rel="preload"
+    href="https://lichess1.org/assets/_d3CRC1/font/lichess.woff2"
+    as="font"
+    type="font/woff2"
+    crossorigin=""
+  />
+  <link
+    rel="preload"
+    href="https://lichess1.org/assets/_d3CRC1/font/lichess.chess.woff2"
+    as="font"
+    type="font/woff2"
+    crossorigin=""
+  />
+  <link rel="manifest" href="/manifest.json" />
+  <meta name="twitter:site" content="@lichess" />
+  <link rel="jslicense" href="/source" />
+  <script src="https://lichess1.org/assets/_d3CRC1/compiled/cli.min.js"></script>
+  <link
+    rel="stylesheet"
+    href="https://lichess1.org/assets/_d3CRC1/css/complete.light.min.css"
+  />
+  <script src="https://lichess1.org/assets/_d3CRC1/compiled/userComplete.min.js"></script>
+  <link
+    rel="stylesheet"
+    href="https://lichess1.org/assets/_d3CRC1/css/dasher.light.min.css"
+  />
+  <script src="https://lichess1.org/assets/_d3CRC1/compiled/dasher.min.js"></script>
+</head>
+<body
+  class="light brown Woodi Basic coords-in playing fixed-scroll online"
+  data-vapid="BGr5CL0QlEYa7qW7HLqe7DFkCeTsYMLsi1Db+5Vwt1QBIs6+WxN8066AjtP8S9u+w+CbleE8xWY+qQaNEMs7sAs="
+  data-sound-set="standard"
+  data-socket-domains="socket0.lichess.org,socket1.lichess.org,socket2.lichess.org,socket3.lichess.org,socket4.lichess.org,socket5.lichess.org"
+  data-asset-url="https://lichess1.org"
+  data-asset-version="d3CRC1"
+  data-theme="light"
+  data-piece-set="cburnett"
+  style="--zoom: 85"
+>
+  <form id="blind-mode" action="/toggle-blind-mode" method="POST">
+    <input type="hidden" name="enable" value="1" /><input
+      type="hidden"
+      name="redirect"
+      value="/UtD8mbsZdYCs"
+    />
+    <button type="submit">Accessibility: Enable blind mode</button>
+  </form>
+  <a data-icon="" id="zentog" class="text fbt active">Zen mode</a>
+  <header id="top">
+    <div class="site-title-nav">
+      <input
+        type="checkbox"
+        id="tn-tg"
+        class="topnav-toggle fullscreen-toggle"
+        autocomplete="off"
+        aria-label="Navigation"
+      />
+      <label for="tn-tg" class="fullscreen-mask"></label>
+      <label for="tn-tg" class="hbg"><span class="hbg__in"></span></label>
+      <h1 class="site-title">
+        <a href="/">lichess<span>.org</span></a>
+      </h1>
+      <nav id="topnav" class="">
+        <section>
+          <a href="/"
+            ><span class="play">Play</span
+            ><span class="home">lichess.org</span></a
+          >
+          <div role="group">
+            <a href="/?any#hook">Create a game</a
+            ><a href="/tournament">Arena tournaments</a
+            ><a href="/swiss">Swiss tournaments</a
+            ><a href="/simul">Simultaneous exhibitions</a>
+          </div>
+        </section>
+        <section>
+          <a href="/training">Puzzles</a>
+          <div role="group">
+            <a href="/training">Puzzles</a
+            ><a href="/training/dashboard/30">Puzzle Dashboard</a
+            ><a href="/streak">Puzzle Streak</a><a href="/storm">Puzzle Storm</a
+            ><a href="/racer">Puzzle Racer</a>
+          </div>
+        </section>
+        <section>
+          <a href="/practice">Learn</a>
+          <div role="group">
+            <a href="/learn">Chess basics</a><a href="/practice">Practice</a
+            ><a href="/training/coordinate">Coordinates</a
+            ><a href="/study">Study</a><a href="/coach">Coaches</a>
+          </div>
+        </section>
+        <section>
+          <a href="/tv">Watch</a>
+          <div role="group">
+            <a href="/tv">Lichess TV</a><a href="/games">Current games</a
+            ><a href="/streamer">Streamers</a><a href="/broadcast">Broadcasts</a
+            ><a href="/video">Video library</a>
+          </div>
+        </section>
+        <section>
+          <a href="/player">Community</a>
+          <div role="group">
+            <a href="/player">Players</a><a href="/team">Teams</a
+            ><a href="/forum">Forum</a>
+          </div>
+        </section>
+        <section>
+          <a href="/analysis">Tools</a>
+          <div role="group">
+            <a href="/analysis">Analysis board</a
+            ><a href="/analysis#explorer">Opening explorer</a
+            ><a href="/editor">Board editor</a><a href="/paste">Import game</a
+            ><a href="/games/search">Advanced search</a>
+          </div>
+        </section>
+      </nav>
+    </div>
+    <div class="site-buttons">
+      <div id="clinput">
+        <a class="link"><span data-icon=""></span></a
+        ><input
+          spellcheck="false"
+          autocomplete="off"
+          aria-label="Search"
+          placeholder="Search"
+        />
+        <div class="complete-list none"></div>
+      </div>
+      <div class="dasher">
+        <a class="toggle link anon"
+          ><span title="Preferences" data-icon=""></span
+        ></a>
+        <div id="dasher_app" class="dropdown" data-playing="true">
+          <div>
+            <div class="subs">
+              <button class="sub" data-icon="" type="button">Language</button>
+              <button class="sub" data-icon="" type="button">Sound</button>
+              <button class="sub" data-icon="" type="button">
+                Background
+              </button>
+              <button class="sub" data-icon="" type="button">
+                Board geometry
+              </button>
+              <button class="sub" data-icon="" type="button">
+                Board theme
+              </button>
+              <button class="sub" data-icon="" type="button">Piece set</button>
+              <div class="zen selector">
+                <button
+                  class="text"
+                  data-icon=""
+                  title="Keyboard: z"
+                  type="button"
+                >
+                  Zen mode
+                </button>
+              </div>
+            </div>
+            <a class="status" href="/lag">
+              <signal class="q3"
+                ><i></i><i></i><i></i><i class="off"></i
+              ></signal>
+              <span
+                class="ping"
+                title="PING: Network lag between you and Lichess"
+                ><em>PING</em><strong>156</strong><em>ms</em></span
+              ><span
+                class="server"
+                title="SERVER: Time to process a move on Lichess's server"
+                ><em>SERVER</em><strong>0<small>.1</small></strong
+                ><em>ms</em></span
+              ></a
+            >
+          </div>
+        </div>
+      </div>
+      <a href="/login?referrer=/UtD8mbsZdYCs" class="signin button button-empty"
+        >Sign in</a
+      >
+    </div>
+  </header>
+  <div id="main-wrap" class="is2d">
+    <main class="round">
+      <aside class="round__side">
+        <div class="game__meta">
+          <section>
+            <div class="game__meta__infos" data-icon="">
+              <div>
+                <div class="header">
+                  <div class="setup">
+                    1+0 • Casual •
+                    <span title="Very fast games: less than 3 minutes"
+                      >Bullet</span
+                    >
+                  </div>
+                  <time
+                    class="timeago set"
+                    datetime="2021-09-03T19:15:06.037Z"
+                    title="4 Sept 2021, 00:45"
+                    >17 minutes ago
+                  </time>
+                </div>
+              </div>
+            </div>
+            <div class="game__meta__players">
+              <div class="player color-icon is white text">
+                <span class="user-link">Anonymous</span>
+              </div>
+              <div class="player color-icon is black text">
+                <span class="user-link">Anonymous</span>
+              </div>
+            </div>
+          </section>
+          <section class="status">Black resigned • White is victorious</section>
+        </div>
+        <section class="mchat mchat-optional">
+          <div class="mchat__tabs nb_1">
+            <div class="mchat__tab discussion mchat__tab-active">
+              <span>Chat room</span
+              ><input type="checkbox" title="Toggle the chat" checked="" />
+            </div>
+          </div>
+          <div class="mchat__content discussion">
+            <ol
+              class="mchat__messages chat-v-1"
+              role="log"
+              aria-live="polite"
+              aria-atomic="false"
+            ></ol>
+            <input
+              class="mchat__say"
+              placeholder="Sign in to chat"
+              disabled=""
+            />
+            <div class="mchat__presets">
+              <span title="Good game">gg</span
+              ><span title="Well played">wp</span
+              ><span title="Thank you">ty</span
+              ><span title="I've got to go">gtg</span
+              ><span title="Bye!">bye</span>
+            </div>
+          </div>
+        </section>
+      </aside>
+      <div class="round__app variant-standard">
+        <div class="round__app__board main-board">
+          <div class="cg-wrap orientation-black manipulable">
+            <cg-container style="width: 426.667px; height: 426.667px">
+              <cg-board>
+                <square
+                  class="last-move"
+                  style="transform: translate(266.667px, 106.667px)"
+                ></square>
+                <square
+                  class="last-move"
+                  style="transform: translate(266.667px, 53.3333px)"
+                ></square>
+                <piece
+                  class="black rook"
+                  style="transform: translate(373.333px, 373.333px)"
+                ></piece>
+                <piece
+                  class="black knight"
+                  style="transform: translate(320px, 373.333px)"
+                ></piece>
+                <piece
+                  class="black bishop"
+                  style="transform: translate(266.667px, 373.333px)"
+                ></piece>
+                <piece
+                  class="black queen"
+                  style="transform: translate(213.333px, 373.333px)"
+                ></piece>
+                <piece
+                  class="black king"
+                  style="transform: translate(160px, 373.333px)"
+                ></piece>
+                <piece
+                  class="black bishop"
+                  style="transform: translate(106.667px, 373.333px)"
+                ></piece>
+                <piece
+                  class="black knight"
+                  style="transform: translate(53.3333px, 373.333px)"
+                ></piece>
+                <piece
+                  class="black rook"
+                  style="transform: translate(0px, 373.333px)"
+                ></piece>
+                <piece
+                  class="black pawn"
+                  style="transform: translate(373.333px, 320px)"
+                ></piece>
+                <piece
+                  class="black pawn"
+                  style="transform: translate(320px, 320px)"
+                ></piece>
+                <piece
+                  class="black pawn"
+                  style="transform: translate(266.667px, 213.333px)"
+                ></piece>
+                <piece
+                  class="black pawn"
+                  style="transform: translate(213.333px, 266.667px)"
+                ></piece>
+                <piece
+                  class="black pawn"
+                  style="transform: translate(160px, 320px)"
+                ></piece>
+                <piece
+                  class="black pawn"
+                  style="transform: translate(106.667px, 320px)"
+                ></piece>
+                <piece
+                  class="black pawn"
+                  style="transform: translate(53.3333px, 320px)"
+                ></piece>
+                <piece
+                  class="black pawn"
+                  style="transform: translate(0px, 320px)"
+                ></piece>
+                <piece
+                  class="white pawn"
+                  style="transform: translate(373.333px, 53.3333px)"
+                ></piece>
+                <piece
+                  class="white pawn"
+                  style="transform: translate(320px, 53.3333px)"
+                ></piece>
+                <piece
+                  class="white pawn"
+                  style="transform: translate(266.667px, 106.667px)"
+                ></piece>
+                <piece
+                  class="white pawn"
+                  style="transform: translate(213.333px, 53.3333px)"
+                ></piece>
+                <piece
+                  class="white pawn"
+                  style="transform: translate(160px, 160px)"
+                ></piece>
+                <piece
+                  class="white pawn"
+                  style="transform: translate(106.667px, 53.3333px)"
+                ></piece>
+                <piece
+                  class="white pawn"
+                  style="transform: translate(53.3333px, 53.3333px)"
+                ></piece>
+                <piece
+                  class="white pawn"
+                  style="transform: translate(0px, 53.3333px)"
+                ></piece>
+                <piece
+                  class="white rook"
+                  style="transform: translate(373.333px, 0px)"
+                ></piece>
+                <piece
+                  class="white knight"
+                  style="transform: translate(320px, 0px)"
+                ></piece>
+                <piece
+                  class="white bishop"
+                  style="transform: translate(266.667px, 0px)"
+                ></piece>
+                <piece
+                  class="white queen"
+                  style="transform: translate(213.333px, 0px)"
+                ></piece>
+                <piece
+                  class="white king"
+                  style="transform: translate(160px, 0px)"
+                ></piece>
+                <piece
+                  class="white bishop"
+                  style="transform: translate(106.667px, 0px)"
+                ></piece>
+                <piece
+                  class="white knight"
+                  style="transform: translate(106.667px, 106.667px)"
+                ></piece>
+                <piece
+                  class="white rook"
+                  style="transform: translate(0px, 0px)"
+                ></piece>
+              </cg-board>
+              <svg
+                class="cg-shapes"
+                viewBox="-4 -4 8 8"
+                preserveAspectRatio="xMidYMid slice"
+              >
+                <defs></defs>
+                <g></g>
+              </svg>
+              <svg
+                class="cg-custom-svgs"
+                viewBox="-3.5 -3.5 8 8"
+                preserveAspectRatio="xMidYMid slice"
+              >
+                <g></g>
+              </svg>
+              <coords class="ranks black">
+                <coord>1</coord>
+                <coord>2</coord>
+                <coord>3</coord>
+                <coord>4</coord>
+                <coord>5</coord>
+                <coord>6</coord>
+                <coord>7</coord>
+                <coord>8</coord>
+              </coords>
+              <coords class="files black">
+                <coord>a</coord>
+                <coord>b</coord>
+                <coord>c</coord>
+                <coord>d</coord>
+                <coord>e</coord>
+                <coord>f</coord>
+                <coord>g</coord>
+                <coord>h</coord>
+              </coords>
+              <piece
+                class="ghost black pawn"
+                style="visibility: hidden; transform: translate(232px, 348px)"
+              ></piece>
+              <cg-resize class="none"></cg-resize>
+            </cg-container>
+          </div>
+        </div>
+        <div class="material material-top"></div>
+        <div class="round__app__table"></div>
+        <div class="ruser-top ruser user-link offline">
+          <i class="line" title="Left the game"></i>
+          <name>Anonymous</name>
+        </div>
+        <rm6>
+          <div class="buttons">
+            <button
+              class="fbt flip"
+              title="Flip board"
+              data-act="flip"
+              data-icon=""
+            ></button>
+            <button class="fbt" data-icon="" data-ply="0"></button>
+            <button class="fbt" data-icon="" data-ply="4"></button>
+            <button class="fbt" disabled="" data-icon="" data-ply="-"></button>
+            <button class="fbt" disabled="" data-icon="" data-ply="-"></button>
+            <a
+              class="fbt analysis"
+              title="Analysis board"
+              href="/UtD8mbsZ/black/analysis#5"
+              data-icon=""
+            ></a>
+          </div>
+          <l4x>
+            <i5z>1</i5z>
+            <u8t class="">e4</u8t>
+            <u8t class="">c5</u8t>
+            <i5z>2</i5z>
+            <u8t class="">Nf3</u8t>
+            <u8t class="">d6</u8t>
+            <i5z>3</i5z>
+            <u8t class="a1t">c3</u8t>
+            <div class="result-wrap">
+              <p class="result">1-0</p>
+              <p class="status">Black resigned • White is victorious</p>
+            </div>
+          </l4x>
+        </rm6>
+        <div class="rcontrols">
+          <div class="follow-up">
+            <button class="fbt rematch white disabled" title="">
+              <span>Rematch</span>
+            </button>
+            <a class="fbt" href="/?hook_like=UtD8mbsZ">New opponent</a
+            ><a class="fbt" href="/UtD8mbsZ/black#5">Analysis board</a>
+          </div>
+        </div>
+        <div class="ruser-bottom ruser user-link online">
+          <i class="line" title="Joined the game"></i>
+          <name>Anonymous</name>
+        </div>
+        <div class="rclock rclock-top">
+          <div class="bar"></div>
+          <div class="time">
+            00
+            <sep>:</sep>
+            57
+          </div>
+        </div>
+        <div class="rclock rclock-bottom">
+          <div class="bar"></div>
+          <div class="time">
+            00
+            <sep>:</sep>
+            58
+          </div>
+        </div>
+        <div class="material material-bottom"></div>
+      </div>
+      <div class="round__underboard"></div>
+      <div class="round__underchat">
+        <div
+          class="chat__members none"
+          aria-live="off"
+          aria-relevant="additions removals text"
+          data-watched="1"
+        >
+          <div class="chat__members__inner">
+            <div
+              class="chat__members__number"
+              data-icon=""
+              title="Spectators"
+            ></div>
+            <div></div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+  <a id="reconnecting" class="link text" data-icon="">Reconnecting</a>
+  <script nonce="cTqZ2FgO9poMyoe7riCQqVLO">
+    lichess = {
+      load: new Promise((r) => {
+        window.onload = r;
+      }),
+      quantity: function (c) {
+        return c == 1 ? 'one' : 'other';
+      },
+    };
+    lichess.timeagoLocale = function (s, n) {
+      return [
+        ['just now', 'right now'],
+        ['%s seconds ago', 'in %s seconds'],
+        ['1 minute ago', 'in 1 minute'],
+        ['%s minutes ago', 'in %s minutes'],
+        ['1 hour ago', 'in 1 hour'],
+        ['%s hours ago', 'in %s hours'],
+        ['1 day ago', 'in 1 day'],
+        ['%s days ago', 'in %s days'],
+        ['1 week ago', 'in 1 week'],
+        ['%s weeks ago', 'in %s weeks'],
+        ['1 month ago', 'in 1 month'],
+        ['%s months ago', 'in %s months'],
+        ['1 year ago', 'in 1 year'],
+        ['%s years ago', 'in %s years'],
+      ][n];
+    };
+  </script>
+  <script
+    defer="defer"
+    src="https://lichess1.org/assets/_d3CRC1/compiled/lichess.min.js"
+  ></script>
+  <script
+    defer="defer"
+    src="https://lichess1.org/assets/_d3CRC1/compiled/round.min.js"
+  ></script>
+  <script nonce="cTqZ2FgO9poMyoe7riCQqVLO">
+    lichess.load.then(() => {
+      LichessRound.boot({
+        data: {
+          game: {
+            id: 'UtD8mbsZ',
+            variant: { key: 'standard', name: 'Standard', short: 'Std' },
+            speed: 'bullet',
+            perf: 'bullet',
+            rated: false,
+            initialFen:
+              'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1',
+            fen: 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1',
+            player: 'white',
+            turns: 0,
+            startedAtTurn: 0,
+            source: 'lobby',
+            status: { id: 20, name: 'started' },
+            createdAt: 1630696506037,
+          },
+          player: { color: 'black', id: 'dYCs', version: 0 },
+          opponent: { color: 'white', ai: null },
+          url: { socket: '/play/UtD8mbsZdYCs/v6', round: '/UtD8mbsZdYCs' },
+          pref: {
+            animationDuration: 0.0,
+            coords: 1,
+            resizeHandle: 1,
+            replay: 2,
+            autoQueen: 2,
+            clockTenths: 1,
+            moveEvent: 2,
+            clockBar: true,
+            clockSound: true,
+            confirmResign: true,
+            rookCastle: true,
+            highlight: true,
+            destination: true,
+            enablePremove: true,
+            showCaptured: true,
+          },
+          clock: {
+            running: false,
+            initial: 60,
+            increment: 0,
+            white: 60.0,
+            black: 60.0,
+            emerg: 10,
+            moretime: 15,
+          },
+          takebackable: true,
+          moretimeable: true,
+          expiration: { idleMillis: 155, millisToMove: 20000 },
+          steps: [
+            {
+              ply: 0,
+              uci: null,
+              san: null,
+              fen: 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1',
+            },
+          ],
+        },
+        i18n: {
+          anonymous: 'Anonymous',
+          flipBoard: 'Flip board',
+          aiNameLevelAiLevel: '%1$s level %2$s',
+          yourTurn: 'Your turn',
+          abortGame: 'Abort game',
+          proposeATakeback: 'Propose a takeback',
+          offerDraw: 'Offer draw',
+          resign: 'Resign',
+          'opponentLeftCounter:one':
+            'Your opponent left the game. You can claim victory in %s second.',
+          opponentLeftCounter:
+            'Your opponent left the game. You can claim victory in %s seconds.',
+          opponentLeftChoices:
+            'Your opponent left the game. You can claim victory, call the game a draw, or wait.',
+          forceResignation: 'Claim victory',
+          forceDraw: 'Call draw',
+          threefoldRepetition: 'Threefold repetition',
+          claimADraw: 'Claim a draw',
+          drawOfferSent: 'Draw offer sent',
+          cancel: 'Cancel',
+          yourOpponentOffersADraw: 'Your opponent offers a draw',
+          accept: 'Accept',
+          decline: 'Decline',
+          takebackPropositionSent: 'Takeback sent',
+          yourOpponentProposesATakeback: 'Your opponent proposes a takeback',
+          thisAccountViolatedTos:
+            'This account violated the Lichess Terms of Service',
+          gameAborted: 'Game aborted',
+          checkmate: 'Checkmate',
+          whiteResigned: 'White resigned',
+          blackResigned: 'Black resigned',
+          stalemate: 'Stalemate',
+          whiteLeftTheGame: 'White left the game',
+          blackLeftTheGame: 'Black left the game',
+          draw: 'Draw',
+          whiteTimeOut: 'White time out',
+          blackTimeOut: 'Black time out',
+          whiteIsVictorious: 'White is victorious',
+          blackIsVictorious: 'Black is victorious',
+          drawByMutualAgreement: 'Draw by mutual agreement',
+          fiftyMovesWithoutProgress: 'Fifty moves without progress',
+          insufficientMaterial: 'Insufficient material',
+          withdraw: 'Withdraw',
+          rematch: 'Rematch',
+          rematchOfferSent: 'Rematch offer sent',
+          rematchOfferAccepted: 'Rematch offer accepted',
+          waitingForOpponent: 'Waiting for opponent',
+          cancelRematchOffer: 'Cancel rematch offer',
+          newOpponent: 'New opponent',
+          confirmMove: 'Confirm move',
+          viewRematch: 'View rematch',
+          whitePlays: 'White to play',
+          blackPlays: 'Black to play',
+          'giveNbSeconds:one': 'Give %s second',
+          giveNbSeconds: 'Give %s seconds',
+          giveMoreTime: 'Give more time',
+          gameOver: 'Game Over',
+          analysis: 'Analysis board',
+          yourOpponentWantsToPlayANewGameWithYou:
+            'Your opponent wants to play a new game with you',
+          youPlayTheWhitePieces: 'You play the white pieces',
+          youPlayTheBlackPieces: 'You play the black pieces',
+          itsYourTurn: 'It\u0027s your turn!',
+          'nbSecondsToPlayTheFirstMove:one': '%s second to play the first move',
+          nbSecondsToPlayTheFirstMove: '%s seconds to play the first move',
+        },
+        userId: null,
+        chat: {
+          data: {
+            id: 'UtD8mbsZ',
+            name: 'Chat room',
+            lines: [],
+            userId: null,
+            resourceId: 'game/UtD8mbsZ',
+            restricted: true,
+          },
+          i18n: {
+            talkInChat: 'Please be nice in the chat!',
+            toggleTheChat: 'Toggle the chat',
+            loginToChat: 'Sign in to chat',
+            youHaveBeenTimedOut: 'You have been timed out.',
+          },
+          writeable: true,
+          public: false,
+          permissions: { local: false },
+        },
+      });
+    });
+  </script>
+  <div id="imageDownloaderSidebarContainer">
+    <div class="image-downloader-ext-container">
+      <div tabindex="-1" class="b-sidebar-outer">
+        <!---->
+        <div
+          id="image-downloader-sidebar"
+          tabindex="-1"
+          role="dialog"
+          aria-modal="false"
+          aria-hidden="true"
+          class="b-sidebar shadow b-sidebar-right bg-light text-dark"
+          style="width: 500px; display: none"
+        >
+          <!---->
+          <div class="b-sidebar-body">
+            <div></div>
+          </div>
+          <!---->
+        </div>
+        <!----><!---->
+      </div>
+    </div>
+  </div>
+</body>

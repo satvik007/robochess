@@ -1,0 +1,45 @@
+{
+  "name": "robochess",
+  "version": "1.0.0",
+  "description": "A bot that can play chess online using stockfish.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "eslint": "[ \"$CI\" = true ] && eslint --quiet -f codeframe --ext ts,tsx . || eslint --ext ts,tsx .",
+    "lint": "npm run eslint && npm run tsc",
+    "eslint-fix": "eslint --ext js --ext ts --fix ."
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/satvik007/robochess.git"
+  },
+  "keywords": [
+    "chess",
+    "stockfish"
+  ],
+  "author": "satvik.choudhary",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/satvik007/robochess/issues"
+  },
+  "homepage": "https://github.com/satvik007/robochess#readme",
+  "dependencies": {
+    "puppeteer": "^10.2.0",
+    "stockfish": "^12.0.0"
+  },
+  "devDependencies": {
+    "@types/puppeteer": "^5.4.4",
+    "@typescript-eslint/eslint-plugin": "^4.30.0",
+    "@typescript-eslint/parser": "^4.30.0",
+    "eslint": "^7.32.0",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-plugin-import": "^2.24.2",
+    "eslint-plugin-mocha": "^9.0.0",
+    "eslint-plugin-notice": "^0.9.10",
+    "eslint-plugin-prettier": "^4.0.0",
+    "eslint-plugin-react-hooks": "^4.2.0",
+    "eslint-plugin-unicorn": "^35.0.0",
+    "prettier": "^2.3.2",
+    "typescript": "^4.4.2"
+  }
+}

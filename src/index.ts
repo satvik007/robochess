@@ -1,4 +1,6 @@
-import { Page, launch } from 'puppeteer';
+import type { Page } from 'puppeteer';
+import puppeteer = require('puppeteer');
+import { Game } from './game.js';
 
 async function getBrowser() {
   const args = [
@@ -16,7 +18,7 @@ async function getBrowser() {
     '--unlimited-storage',
     '--full-memory-crash-report',
   ];
-  const browser = await launch({
+  const browser = await puppeteer.launch({
     ignoreHTTPSErrors: true,
     // headless: true,
     headless: false,
@@ -27,20 +29,22 @@ async function getBrowser() {
 }
 
 async function gotoCasualBullet(page: Page) {
-  try {
-    const siteUrl = 'https://lichess.org/';
-    await page.goto(siteUrl);
+  const siteUrl = 'https://lichess.org/';
+  await page.goto(siteUrl);
 
-    const mainTab = await page.$('div.tabs-horiz > span:nth-child(1)');
-    await mainTab?.tap();
-
-    await page.waitForTimeout(100);
-
-    const elementHandle = await page.$('div[data-id="1+0"]');
-    await elementHandle?.tap();
-  } catch (error: any) {
-    console.log(error);
+  const mainTab = await page.$('div.tabs-horiz > span:nth-child(1)');
+  if (!mainTab) {
+    throw new Error('main Tab locator not found.');
   }
+  await mainTab.tap();
+
+  await page.waitForTimeout(100);
+
+  const gameTab = await page.$('div[data-id="1+0"]');
+  if (!gameTab) {
+    throw new Error('game Tab locator not found.');
+  }
+  await gameTab.tap();
 }
 
 async function gotoTestPage(page: Page) {
@@ -49,9 +53,12 @@ async function gotoTestPage(page: Page) {
 }
 
 async function main() {
-  const browser = await getBrowser();
-  const page = (await browser.pages())[0];
-  await gotoTestPage(page);
+  // const browser = await getBrowser();
+  // const page = (await browser.pages())[0];
+  // await gotoTestPage(page);
+  // await gotoCasualBullet(page)
+  const game = new Game();
+  await game.initEngine(1, 0, 'white');
 }
 
 main().catch(function (error) {

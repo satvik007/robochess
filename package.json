@@ -9,7 +9,7 @@
     "lint": "npm run eslint && npm run tsc",
     "eslint-fix": "eslint --ext js --ext ts --fix .",
     "pretty": "prettier --write .",
-    "start": "node build/index.js --experimental-wasm-bulk-memory --experimental-wasm-threads",
+    "start": "node --experimental-wasm-bulk-memory --experimental-wasm-threads build/index.js",
     "build": "tsc --version && tsc -b tsconfig.json"
   },
   "repository": {
@@ -31,6 +31,7 @@
     "stockfish": "^12.0.0"
   },
   "devDependencies": {
+    "@types/jquery": "^3.5.6",
     "@types/puppeteer": "^5.4.4",
     "@typescript-eslint/eslint-plugin": "^4.30.0",
     "@typescript-eslint/parser": "^4.30.0",

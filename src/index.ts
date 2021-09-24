@@ -1,5 +1,6 @@
 import type { Page } from 'puppeteer';
 import puppeteer = require('puppeteer');
+import { Engine } from './engine.js';
 import { Game } from './game.js';
 
 async function getBrowser() {
@@ -18,14 +19,13 @@ async function getBrowser() {
     '--unlimited-storage',
     '--full-memory-crash-report',
   ];
-  const browser = await puppeteer.launch({
+  return await puppeteer.launch({
     ignoreHTTPSErrors: true,
     // headless: true,
     headless: false,
-    // devtools: true,
+    devtools: true,
     args,
   });
-  return browser;
 }
 
 async function gotoCasualBullet(page: Page) {
@@ -52,13 +52,25 @@ async function gotoTestPage(page: Page) {
   await page.goto(siteUrl);
 }
 
+async function gotoCasualGame(page: Page) {
+  const siteUrl = 'https://lichess.org/fp6gwNVZ';
+  await page.goto(siteUrl);
+
+  const joinButton = await page.$('button.text.button.button-fat');
+  if (joinButton) {
+    await joinButton.tap();
+  }
+}
+
 async function main() {
-  // const browser = await getBrowser();
-  // const page = (await browser.pages())[0];
+  const browser = await getBrowser();
+  const page = (await browser.pages())[0];
+  await gotoCasualGame(page);
   // await gotoTestPage(page);
   // await gotoCasualBullet(page)
-  const game = new Game();
-  await game.initEngine(1, 0, 'white');
+  const game = new Game(page, 10, 10);
+  const engine = new Engine(game);
+  await engine.initEngine();
 }
 
 main().catch(function (error) {

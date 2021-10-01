@@ -1,4 +1,4 @@
-import type { Page } from 'puppeteer';
+import type { ElementHandle, Page } from 'puppeteer';
 import puppeteer = require('puppeteer');
 import { Engine } from './engine.js';
 import { Game } from './game.js';
@@ -45,11 +45,8 @@ async function gotoCasualBullet(page: Page) {
     throw new Error('game Tab locator not found.');
   }
   await gameTab.tap();
-}
 
-async function gotoTestPage(page: Page) {
-  const siteUrl = 'http://0.0.0.0:4021/lichess_bullet.html';
-  await page.goto(siteUrl);
+  await page.waitForTimeout(250);
 }
 
 async function gotoCasualGame(page: Page) {
@@ -62,15 +59,82 @@ async function gotoCasualGame(page: Page) {
   }
 }
 
+async function gotoCasualAgainstCompie(
+  page: Page,
+  level = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8,
+  color: 'white' | 'black' | 'random'
+) {
+  const siteUrl = 'https://lichess.org/';
+  await page.goto(siteUrl);
+
+  const playWithCompie = await page.$('a.button.button-metal.config_ai');
+  if (!playWithCompie) {
+    throw new Error('play with computer button not found');
+  }
+  await playWithCompie.tap();
+
+  await page.waitForSelector(`label[for='sf_level_${level}']`);
+
+  const selectElement = (await page.evaluateHandle((level) => {
+    const element = document.querySelector(`label[for='sf_level_${level}']`);
+    if (!element?.parentElement) {
+      throw new Error('select level not found.');
+    }
+    return element.parentElement;
+  }, level)) as ElementHandle;
+  await selectElement.tap();
+
+  const submitColor = await page.$(`button[value='${color}']`);
+  if (!submitColor) {
+    throw new Error('submit Color not found.');
+  }
+  await submitColor.tap();
+
+  await page.waitForSelector('cg-container');
+}
+
 async function main() {
   const browser = await getBrowser();
   const page = (await browser.pages())[0];
-  await gotoCasualGame(page);
-  // await gotoTestPage(page);
-  // await gotoCasualBullet(page)
-  const game = new Game(page, 10, 10);
-  const engine = new Engine(game);
-  await engine.initEngine();
+  // await page.addScriptTag({url: 'https://code.jquery.com/jquery-3.2.1.min.js'});
+  await gotoCasualAgainstCompie(page, 8, 'random');
+  const game = new Game(page, 300, 3);
+
+  const engine = new Engine();
+  const { playerColor } = await game.initArgs();
+  await engine.initEngine(300, 3, playerColor);
+
+  console.log('playerColor:', playerColor);
+  console.log('gameTurn:', game.turn);
+
+  while (!game.gameOver) {
+    await new Promise((p) => setTimeout(p, 2000));
+
+    if (game.turn === playerColor) {
+      engine.turn = playerColor;
+      console.log(game.gameMove);
+      engine.prepareMove();
+      while (!engine.engineMove) {
+        await new Promise((r) => setTimeout(r, 100));
+      }
+      const engineMove = engine.engineMove;
+      engine.engineMove = null;
+      console.log('ENGINE_MOVE:', engineMove);
+      engine.history.push(engineMove);
+      game.history.push(engineMove);
+      engine.turn = playerColor === 'white' ? 'black' : 'white';
+      await game.move(engineMove);
+    } else {
+      game.turn = playerColor === 'white' ? 'black' : 'white';
+      while (!game.gameMove) {
+        await game.getGameMove();
+      }
+      console.log('GAME_MOVE:', game.gameMove);
+      game.history.push(game.gameMove);
+      engine.history.push(game.gameMove);
+      game.turn = playerColor;
+    }
+  }
 }
 
 main().catch(function (error) {

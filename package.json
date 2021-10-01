@@ -27,11 +27,13 @@
   },
   "homepage": "https://github.com/satvik007/robochess#readme",
   "dependencies": {
+    "lodash": "^4.17.21",
     "puppeteer": "^10.2.0",
     "stockfish": "^12.0.0"
   },
   "devDependencies": {
     "@types/jquery": "^3.5.6",
+    "@types/lodash": "^4.14.175",
     "@types/puppeteer": "^5.4.4",
     "@typescript-eslint/eslint-plugin": "^4.30.0",
     "@typescript-eslint/parser": "^4.30.0",

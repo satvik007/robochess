@@ -3,16 +3,16 @@
  */
 
 import * as path from 'path';
-import { Game } from './game.js';
+import type { MoveType } from './types.js';
 
-const Stockfish = require('../node_modules/stockfish/src/stockfish.js')(
+const Stockfish = require('stockfish')(
   console,
   path.join(__dirname, '../node_modules/stockfish/src/stockfish.wasm')
 );
 
 class Engine {
   engine: any;
-  evaler: any;
+  // evaler: any;
   time: {
     wtime: number;
     btime: number;
@@ -31,11 +31,13 @@ class Engine {
     search: string | null;
     score: string;
   };
-  announcedGameOver: boolean;
-  game: Game;
+  gameOver: boolean;
+  engineMove: MoveType | null;
   isEngineRunning: boolean;
+  history: MoveType[];
+  turn: 'white' | 'black';
 
-  constructor(game: Game) {
+  constructor() {
     this.time = {
       wtime: 300000,
       btime: 300000,
@@ -52,17 +54,22 @@ class Engine {
       search: '',
       score: '',
     };
-    this.announcedGameOver = false;
-    this.game = game;
+    this.gameOver = false;
     this.isEngineRunning = false;
+    this.engineMove = null;
+    this.history = [];
+    this.turn = 'white';
   }
 
-  async initEngine(): Promise<void> {
+  async initEngine(
+    baseTime: number,
+    increment: number,
+    playerColor: 'white' | 'black'
+  ): Promise<void> {
     this.engine = await Stockfish();
-    this.evaler = await Stockfish();
+    // this.evaler = await Stockfish();
     this.reset();
-    this.engine.onmessage = this.engineOnMessage;
-    const { baseTime, increment, playerColor } = await this.game.initArgs();
+    this.addListener();
     this.setTime(baseTime, increment);
     this.setPlayerColor(playerColor);
     this.start();
@@ -137,44 +144,42 @@ class Engine {
     this.uciCmd('isready');
     this.engineStatus.engineReady = false;
     this.engineStatus.search = null;
-    this.prepareMove();
-    this.announcedGameOver = false;
+    // this.prepareMove();
+    this.gameOver = false;
   }
 
   prepareMove(): void {
-    const turn = this.game.turn;
-    if (!this.game.gameOver) {
-      if (turn !== this.playerColor) {
-        this.uciCmd('position startpos moves' + this.getMoves());
-        this.uciCmd('position startpos moves' + this.getMoves(), this.evaler);
-        this.uciCmd('eval', this.evaler);
+    this.turn = this.playerColor;
+    if (!this.gameOver) {
+      this.uciCmd('position startpos moves' + this.getMoves());
+      // this.uciCmd('position startpos moves' + this.getMoves(), this.evaler);
+      // this.uciCmd('eval', this.evaler);
 
-        if (this.time && this.time.wtime) {
-          this.uciCmd(
-            'go ' +
-              (this.time.depth ? 'depth ' + this.time.depth : '') +
-              ' wtime ' +
-              this.time.wtime +
-              ' winc ' +
-              this.time.winc +
-              ' btime ' +
-              this.time.btime +
-              ' binc ' +
-              this.time.binc
-          );
-        } else {
-          this.uciCmd(
-            'go ' + (this.time.depth ? 'depth ' + this.time.depth : '')
-          );
-        }
-        this.isEngineRunning = true;
+      if (this.time && this.time.wtime) {
+        this.uciCmd(
+          'go ' +
+            (this.time.depth ? 'depth ' + this.time.depth : '') +
+            ' wtime ' +
+            this.time.wtime +
+            ' winc ' +
+            this.time.winc +
+            ' btime ' +
+            this.time.btime +
+            ' binc ' +
+            this.time.binc
+        );
+      } else {
+        this.uciCmd(
+          'go ' + (this.time.depth ? 'depth ' + this.time.depth : '')
+        );
       }
+      this.isEngineRunning = true;
     }
   }
 
   getMoves(): string {
     let moves = '';
-    const history = this.game.history;
+    const history = this.history;
 
     for (let i = 0; i < history.length; ++i) {
       const move = history[i];
@@ -185,14 +190,84 @@ class Engine {
     return moves;
   }
 
-  engineOnMessage(event: { data: string } | string): void {
-    let line;
-    if (event && typeof event === 'object') {
-      line = event.data;
+  displayStatus(): void {
+    let status = 'Engine: ';
+    if (!this.engineStatus.engineLoaded) {
+      status += 'loading...';
+    } else if (!this.engineStatus.engineReady) {
+      status += 'loaded...';
     } else {
-      line = event;
+      status += 'ready.';
     }
-    console.log('Reply: ' + line);
+
+    if (this.engineStatus.search) {
+      status += this.engineStatus.search;
+      if (this.engineStatus.score) {
+        status +=
+          (this.engineStatus.score.substr(0, 4) === 'Mate' ? ' ' : ' Score: ') +
+          this.engineStatus.score;
+      }
+    }
+    console.log(status);
+  }
+
+  addListener(): void {
+    const that = this;
+    this.engine.addMessageListener(async function (event: MessageEvent) {
+      let line;
+      if (event && typeof event === 'object') {
+        line = event.data;
+      } else {
+        line = event;
+      }
+      console.log('Reply: ' + line);
+
+      if (line === 'uciok') {
+        that.engineStatus.engineLoaded = true;
+      } else if (line === 'readyok') {
+        that.engineStatus.engineReady = true;
+      } else {
+        let match = line.match(/^bestmove ([a-h][1-8])([a-h][1-8])([qrbn])?/);
+        // Did the AI move?
+        if (match) {
+          that.isEngineRunning = false;
+          console.log('game move.');
+          that.engineMove = {
+            from: match[1],
+            to: match[2],
+            promotion: match[3] || '',
+          };
+          // that.prepareMove();
+          // that.uciCmd("eval", that.evaler)
+        } else if (
+          (match = line.match(/^info .*\bdepth (\d+) .*\bnps (\d+)/))
+        ) {
+          that.engineStatus.search = 'Depth: ' + match[1] + ' Nps: ' + match[2];
+        }
+
+        // Is it sending feedback with a score?
+        if ((match = line.match(/^info .*\bscore (\w+) (-?\d+)/))) {
+          const score =
+            parseInt(match[2], 10) * (that.turn === 'white' ? 1 : -1);
+          // Is it measuring in centipawns?
+          if (match[1] === 'cp') {
+            that.engineStatus.score = (score / 100.0).toFixed(2);
+            // Did it find a mate?
+          } else if (match[1] === 'mate') {
+            that.engineStatus.score = 'Mate in ' + Math.abs(score);
+          }
+
+          // Is the score bounded?
+          if ((match = line.match(/\b(upper|lower)bound\b/))) {
+            that.engineStatus.score =
+              ((match[1] === 'upper') === (that.turn === 'white')
+                ? '<= '
+                : '>= ') + that.engineStatus.score;
+          }
+        }
+      }
+      that.displayStatus();
+    });
   }
 }
 

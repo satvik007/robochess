@@ -27,7 +27,14 @@ class Game {
 
   async initArgs(): Promise<InitArgs> {
     await this.page.waitForSelector('cg-container');
-    const boardInfo = await this.page.evaluate(this.getBoardInfo);
+    let boardInfo;
+    while (!boardInfo) {
+      try {
+        boardInfo = await this.page.evaluate(this.getBoardInfo);
+      } catch (error) {
+
+      }
+    }
     this.playerColor = boardInfo.playerColor;
 
     return {
@@ -44,98 +51,98 @@ class Game {
       playerColor: 'white',
     };
 
-    try {
-      function getTime(selector: string) {
-        const clock = document.querySelectorAll(selector);
-        let totalTime = 0;
-        if (clock?.length) {
-          const clockValue = (clock[0] as HTMLElement).innerText.replace(
-            /\s/g,
-            ''
-          );
-          const timeArr = /((\d+):)?(\d+):(\d+)/.exec(clockValue);
-          if (timeArr?.length === 5) {
-            totalTime +=
-              Number.parseInt(timeArr[2] ? timeArr[2] : '0', 10) * 60 * 60;
-            totalTime += Number.parseInt(timeArr[3], 10) * 60;
-            totalTime += Number.parseInt(timeArr[4], 10);
-          }
-        } else {
-          return Infinity;
+    function getTime(selector: string) {
+      const clock = document.querySelectorAll(selector);
+      let totalTime = 0;
+      if (clock?.length) {
+        const clockValue = (clock[0] as HTMLElement).innerText.replace(
+          /\s/g,
+          ''
+        );
+        const timeArr = /((\d+):)?(\d+):(\d+)/.exec(clockValue);
+        if (timeArr?.length === 5) {
+          totalTime +=
+            Number.parseInt(timeArr[2] ? timeArr[2] : '0', 10) * 60 * 60;
+          totalTime += Number.parseInt(timeArr[3], 10) * 60;
+          totalTime += Number.parseInt(timeArr[4], 10);
         }
-        return totalTime;
-      }
-
-      const opponentTime = getTime('div.rclock.rclock-top');
-      const ourTime = getTime('div.rclock.rclock-bottom');
-
-      const container = document.querySelectorAll(
-        'cg-container'
-      )[0] as HTMLElement;
-      const { width, height } = container.style;
-      const widthF = Number.parseFloat(width);
-      const heightF = Number.parseFloat(height);
-      const board = container.children[0];
-      const boardPieces: Array<{ value: string; xF: number; yF: number }> = [];
-
-      for (const element of board.children) {
-        const cssText = (element as HTMLElement).style.cssText;
-        const [, x, y] = /\(([\d.]+)px, ([\d.]+)px\)/.exec(
-          cssText
-        ) as RegExpExecArray;
-        let xF = Number.parseFloat(x);
-        let yF = Number.parseFloat(y);
-        xF = Math.round((xF / widthF) * 8);
-        yF = 8 - Math.round((yF / heightF) * 8);
-
-        if (element.nodeName === 'PIECE') {
-          boardPieces.push({
-            value: element.className.split(' ').slice(0, 2).join(' '),
-            xF,
-            yF,
-          });
-        }
-      }
-
-      const whitePiece = boardPieces.find((piece) =>
-        piece.value.includes('white')
-      ) as { value: string; xF: number; yF: number };
-
-      if (whitePiece.yF <= 2) {
-        result.times = {
-          wtimeSec: ourTime,
-          btimeSec: opponentTime,
-        };
-        result.playerColor = 'white';
       } else {
-        result.times = {
-          wtimeSec: opponentTime,
-          btimeSec: ourTime,
-        };
-        result.playerColor = 'black';
-        for (const piece of boardPieces) {
-          piece.yF = 9 - piece.yF;
-          piece.xF = 7 - piece.xF;
-        }
+        return Infinity;
       }
+      return totalTime;
+    }
 
-      for (const piece of boardPieces) {
-        const { value, xF, yF } = piece;
-        const position =
-          String.fromCharCode('a'.charCodeAt(0) + xF) + yF.toString();
-        result.pieces.push({
-          value,
-          position,
+    const opponentTime = getTime('div.rclock.rclock-top');
+    const ourTime = getTime('div.rclock.rclock-bottom');
+
+    const container = document.querySelectorAll(
+      'cg-container'
+    )[0] as HTMLElement;
+    const { width, height } = container.style;
+    const widthF = Number.parseFloat(width);
+    const heightF = Number.parseFloat(height);
+    const board = container.children[0];
+    const boardPieces: Array<{ value: string; xF: number; yF: number }> = [];
+
+    for (const element of board.children) {
+      const cssText = (element as HTMLElement).style.cssText;
+      const [, x, y] = /\(([\d.]+)px, ([\d.]+)px\)/.exec(
+        cssText
+      ) as RegExpExecArray;
+      let xF = Number.parseFloat(x);
+      let yF = Number.parseFloat(y);
+      xF = Math.round((xF / widthF) * 8);
+      yF = 8 - Math.round((yF / heightF) * 8);
+
+      if (element.nodeName === 'PIECE') {
+        if (element.className.includes('anim')) {
+          throw new Error("animation found.");
+        }
+        boardPieces.push({
+          value: element.className.split(' ').slice(0, 2).join(' '),
+          xF,
+          yF,
         });
       }
-    } catch (error) {
-      console.error(error);
+    }
+
+    const whitePiece = boardPieces.find((piece) =>
+      piece.value.includes('white')
+    ) as { value: string; xF: number; yF: number };
+
+    if (whitePiece.yF <= 2) {
+      result.times = {
+        wtimeSec: ourTime,
+        btimeSec: opponentTime,
+      };
+      result.playerColor = 'white';
+    } else {
+      result.times = {
+        wtimeSec: opponentTime,
+        btimeSec: ourTime,
+      };
+      result.playerColor = 'black';
+      for (const piece of boardPieces) {
+        piece.yF = 9 - piece.yF;
+        piece.xF = 7 - piece.xF;
+      }
+    }
+
+    for (const piece of boardPieces) {
+      const { value, xF, yF } = piece;
+      const position =
+        String.fromCharCode('a'.charCodeAt(0) + xF) + yF.toString();
+      result.pieces.push({
+        value,
+        position,
+      });
     }
 
     console.log(result);
     return result;
   }
 
+  // TODO: Promotion.
   async move(engineMove: MoveType): Promise<void> {
     const { from, to, promotion } = engineMove;
     this.gameMove = null;
@@ -175,14 +182,28 @@ class Game {
       x + sqWidth * x2 + sqWidth / 2,
       y + sqHeight * y2 + sqHeight / 2
     );
+
+    const movedPiece = this.lastBoard.pieces.find(piece => piece.position === from);
+    this.lastBoard.pieces = this.lastBoard.pieces.filter(piece => piece.position !== to);
+    (movedPiece as PieceInfo).position = to;
+
   }
 
   async getGameMove(): Promise<void> {
-    const boardInfo = await this.page.evaluate(this.getBoardInfo);
+    const opponentColor = this.playerColor === 'white' ? 'black' : 'white';
+    let boardInfo: BoardInfo | null = null;
+    while (!boardInfo) {
+      try {
+        boardInfo = await this.page.evaluate(this.getBoardInfo);
+      } catch (error) {
+
+      }
+    }
 
     const movedPiece = boardInfo.pieces.find(
       (piece) =>
-        !this.lastBoard.pieces.some((lastPiece) => _.isEqual(piece, lastPiece))
+        !this.lastBoard.pieces.some((lastPiece) => _.isEqual(piece, lastPiece)) &&
+        piece.value.split(' ')[0] === opponentColor
     );
     if (!movedPiece) {
       return;
@@ -190,7 +211,7 @@ class Game {
 
     const lastPiece = this.lastBoard.pieces.find(
       (lastPiece) =>
-        !boardInfo.pieces.some((piece) => _.isEqual(piece, lastPiece)) &&
+        !(boardInfo as BoardInfo).pieces.some((piece) => _.isEqual(piece, lastPiece)) &&
         movedPiece.value.split(' ')[0] === lastPiece.value.split(' ')[0]
     ) as PieceInfo;
 

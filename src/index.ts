@@ -46,7 +46,7 @@ async function gotoCasualBullet(page: Page) {
   }
   await gameTab.tap();
 
-  await page.waitForTimeout(250);
+  await page.waitForSelector('cg-container');
 }
 
 async function gotoCasualGame(page: Page) {
@@ -97,7 +97,8 @@ async function main() {
   const browser = await getBrowser();
   const page = (await browser.pages())[0];
   // await page.addScriptTag({url: 'https://code.jquery.com/jquery-3.2.1.min.js'});
-  await gotoCasualAgainstCompie(page, 8, 'random');
+  // await gotoCasualAgainstCompie(page, 2, 'random');
+  await gotoCasualBullet(page);
   const game = new Game(page, 300, 3);
 
   const engine = new Engine();
@@ -108,14 +109,12 @@ async function main() {
   console.log('gameTurn:', game.turn);
 
   while (!game.gameOver) {
-    await new Promise((p) => setTimeout(p, 2000));
-
     if (game.turn === playerColor) {
       engine.turn = playerColor;
       console.log(game.gameMove);
       engine.prepareMove();
       while (!engine.engineMove) {
-        await new Promise((r) => setTimeout(r, 100));
+        await new Promise((r) => setTimeout(r, 10));
       }
       const engineMove = engine.engineMove;
       engine.engineMove = null;
@@ -125,6 +124,7 @@ async function main() {
       engine.turn = playerColor === 'white' ? 'black' : 'white';
       await game.move(engineMove);
     } else {
+      await new Promise(r => setTimeout(r, 100));
       game.turn = playerColor === 'white' ? 'black' : 'white';
       while (!game.gameMove) {
         await game.getGameMove();

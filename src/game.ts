@@ -30,7 +30,10 @@ class Game {
     let boardInfo;
     while (!boardInfo) {
       try {
-        boardInfo = await this.page.evaluate(this.getBoardInfo);
+        boardInfo = await this.page.evaluate(this.getBoardInfo, null);
+        if (boardInfo.pieces.length !== 32) {
+          boardInfo = null;
+        }
       } catch (error) {
 
       }
@@ -44,11 +47,11 @@ class Game {
     };
   }
 
-  async getBoardInfo(): Promise<BoardInfo> {
+  async getBoardInfo(playerColor: 'white'|'black'): Promise<BoardInfo> {
     const result: BoardInfo = {
       pieces: [],
       times: { wtimeSec: 0, btimeSec: 0 },
-      playerColor: 'white',
+      playerColor: playerColor,
     };
 
     function getTime(selector: string) {
@@ -106,16 +109,24 @@ class Game {
       }
     }
 
-    const whitePiece = boardPieces.find((piece) =>
-      piece.value.includes('white')
-    ) as { value: string; xF: number; yF: number };
+    if (!playerColor) {
+      const whitePiece = boardPieces.find((piece) =>
+        piece.value.includes('white')
+      ) as { value: string; xF: number; yF: number };
+      if (whitePiece.yF <= 2) {
+        playerColor = 'white';
+        result.playerColor = 'white';
+      } else {
+        playerColor = 'black';
+        result.playerColor = 'black';
+      }
+    }
 
-    if (whitePiece.yF <= 2) {
+    if (playerColor === 'white') {
       result.times = {
         wtimeSec: ourTime,
         btimeSec: opponentTime,
       };
-      result.playerColor = 'white';
     } else {
       result.times = {
         wtimeSec: opponentTime,
@@ -194,7 +205,7 @@ class Game {
     let boardInfo: BoardInfo | null = null;
     while (!boardInfo) {
       try {
-        boardInfo = await this.page.evaluate(this.getBoardInfo);
+        boardInfo = await this.page.evaluate(this.getBoardInfo, this.playerColor);
       } catch (error) {
 
       }

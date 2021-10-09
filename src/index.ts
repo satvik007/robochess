@@ -46,7 +46,7 @@ async function gotoCasualBullet(page: Page) {
   }
   await gameTab.tap();
 
-  await page.waitForSelector('cg-container');
+  await page.waitForSelector('cg-board');
 }
 
 async function gotoCasualGame(page: Page) {
